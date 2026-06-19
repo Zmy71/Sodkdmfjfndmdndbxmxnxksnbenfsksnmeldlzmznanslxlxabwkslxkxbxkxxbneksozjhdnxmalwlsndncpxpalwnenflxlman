@@ -1,0 +1,212 @@
+--[[
+🏁 Auto Checkpoint Obby V1 + UI Upgrade 🏁
+https://www.roblox.com/share?code=6ab07454f5848843b75ba47ce3c9e2c8&type=ExperienceDetails&stamp=1781890720390
+]]
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+pcall(function()
+    game.CoreGui.AutoCheckpointObby:Destroy()
+end)
+
+---------------- GUI ----------------
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "AutoCheckpointObby"
+gui.Parent = game.CoreGui
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0,270,0,175)
+frame.Position = UDim2.new(.5,-135,.5,-87)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.Parent = gui
+
+frame.Active = true
+frame.Draggable = true
+
+Instance.new("UICorner", frame)
+
+---------------- TITLE ----------------
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-30,0,30)
+title.BackgroundTransparency = 1
+title.Text = "🏁 Auto Checkpoint Obby"
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.new(1,1,1)
+title.TextScaled = true
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+---------------- CLOSE BUTTON ----------------
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,30,0,30)
+closeBtn.Position = UDim2.new(1,-30,0,0)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+closeBtn.Parent = frame
+
+Instance.new("UICorner", closeBtn)
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+---------------- TOGGLE BUTTON ----------------
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(0,30,0,30)
+toggleBtn.Position = UDim2.new(0,5,0,5)
+toggleBtn.Text = "≡"
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextColor3 = Color3.new(1,1,1)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+toggleBtn.Parent = gui
+
+Instance.new("UICorner", toggleBtn)
+
+local visible = true
+
+toggleBtn.MouseButton1Click:Connect(function()
+    visible = not visible
+    frame.Visible = visible
+    toggleBtn.Text = visible and "≡" or "◻"
+end)
+
+---------------- INFO ----------------
+
+local info = Instance.new("TextLabel")
+info.Size = UDim2.new(1,-10,0,60)
+info.Position = UDim2.new(0,5,0,32)
+info.BackgroundTransparency = 1
+info.TextWrapped = true
+info.Font = Enum.Font.Code
+info.TextSize = 13
+info.TextColor3 = Color3.fromRGB(200,200,200)
+info.Text = "Tekan Scan dulu, lalu Auto TP"
+info.Parent = frame
+
+---------------- BUTTONS ----------------
+
+local scanBtn = Instance.new("TextButton")
+scanBtn.Size = UDim2.new(.4,0,0,35)
+scanBtn.Position = UDim2.new(.05,0,1,-45)
+scanBtn.Text = "🔍 Scan"
+scanBtn.Font = Enum.Font.GothamBold
+scanBtn.TextColor3 = Color3.new(1,1,1)
+scanBtn.BackgroundColor3 = Color3.fromRGB(40,100,200)
+scanBtn.Parent = frame
+Instance.new("UICorner", scanBtn)
+
+local tpBtn = Instance.new("TextButton")
+tpBtn.Size = UDim2.new(.4,0,0,35)
+tpBtn.Position = UDim2.new(.55,0,1,-45)
+tpBtn.Text = "▶ Auto TP"
+tpBtn.Font = Enum.Font.GothamBold
+tpBtn.TextColor3 = Color3.new(1,1,1)
+tpBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+tpBtn.Parent = frame
+Instance.new("UICorner", tpBtn)
+
+---------------- SCAN ----------------
+
+local function isCheckpoint(v)
+    return v:IsA("Part")
+        and v.Name == "Point"
+        and v.Parent
+        and tonumber(v.Parent.Name) ~= nil
+end
+
+local function scanAll()
+    local found = {}
+
+    local function recurse(parent)
+        for _, v in ipairs(parent:GetChildren()) do
+            if isCheckpoint(v) then
+                table.insert(found, v)
+            end
+            recurse(v)
+        end
+    end
+
+    recurse(game.Workspace)
+    return found
+end
+
+local function getSorted(list)
+    table.sort(list, function(a, b)
+        return tonumber(a.Parent.Name) < tonumber(b.Parent.Name)
+    end)
+    return list
+end
+
+---------------- LOGIC ----------------
+
+local checkpoints = {}
+
+scanBtn.MouseButton1Click:Connect(function()
+    checkpoints = getSorted(scanAll())
+
+    info.Text = "Scan selesai!\n"..#checkpoints.." checkpoint ditemukan."
+
+    tpBtn.BackgroundColor3 = #checkpoints > 0
+        and Color3.fromRGB(30,150,60)
+        or Color3.fromRGB(60,60,60)
+end)
+
+game.Workspace.DescendantAdded:Connect(function(v)
+    if isCheckpoint(v) then
+        for _, existing in ipairs(checkpoints) do
+            if existing == v then return end
+        end
+        table.insert(checkpoints, v)
+        checkpoints = getSorted(checkpoints)
+    end
+end)
+
+---------------- AUTO TP ----------------
+
+local running = false
+
+tpBtn.MouseButton1Click:Connect(function()
+    if #checkpoints == 0 then
+        info.Text = "⚠️ Scan dulu!"
+        return
+    end
+
+    running = not running
+
+    tpBtn.Text = running and "⏹ Stop" or "▶ Auto TP"
+    tpBtn.BackgroundColor3 = running
+        and Color3.fromRGB(180,40,40)
+        or Color3.fromRGB(30,150,60)
+
+    if not running then return end
+
+    task.spawn(function()
+        for i, cp in ipairs(checkpoints) do
+            if not running then break end
+
+            local char = player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+
+            if cp and cp.Parent and root then
+                info.Text = "🏁 Stage "..cp.Parent.Name.." ("..i.."/"..#checkpoints..")"
+                root.CFrame = CFrame.new(cp.Position + Vector3.new(0,3,0))
+                task.wait(0.7)
+            end
+        end
+
+        if running then
+            running = false
+            tpBtn.Text = "▶ Auto TP"
+            tpBtn.BackgroundColor3 = Color3.fromRGB(30,150,60)
+            info.Text = "✅ Semua checkpoint selesai!"
+        end
+    end)
+end)
