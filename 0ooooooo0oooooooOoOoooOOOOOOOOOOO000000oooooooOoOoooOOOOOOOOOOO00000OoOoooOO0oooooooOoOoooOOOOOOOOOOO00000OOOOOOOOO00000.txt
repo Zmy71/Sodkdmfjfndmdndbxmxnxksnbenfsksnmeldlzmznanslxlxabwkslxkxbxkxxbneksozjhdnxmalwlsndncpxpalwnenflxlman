@@ -10,7 +10,7 @@ end)
 local SAFE_LINK = "https://sfl.gl/aEdVf6Q"
 
 -- KEY ASLI (STRING, BUKAN URL)
-local VALID_KEY = "ggdgdhdhbsnwkwlwledndncklx87+22()39$$!!$#?2)3)_(;"!"!_)3390192+288383727local"
+local VALID_KEY = "ggdgdhdhbsnwkwlwledndncklxoOOOoooooooooOOOooOoo0000003390192288383727local"
 
 ---------------- GUI ROOT ----------------
 local gui = Instance.new("ScreenGui")
