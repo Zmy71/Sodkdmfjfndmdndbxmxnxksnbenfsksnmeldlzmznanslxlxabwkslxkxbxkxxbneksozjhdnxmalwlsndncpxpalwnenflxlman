@@ -7,7 +7,7 @@ pcall(function()
 end)
 
 ---------------- CONFIG ----------------
-local SAFE_LINK = "https://sfl.gl/aEdVf6Q"
+local SAFE_LINK = "https://sfl.gl/RejxtL8"
 
 -- KEY ASLI (STRING, BUKAN URL)
 local VALID_KEY = "ggdgdhdhbsnwkwlwledndncklxoOOOoooooooooOOOooOoo0000003390192288383727local"
