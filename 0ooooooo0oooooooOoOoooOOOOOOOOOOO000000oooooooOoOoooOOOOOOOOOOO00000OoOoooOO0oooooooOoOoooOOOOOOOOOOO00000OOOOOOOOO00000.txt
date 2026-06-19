@@ -4,136 +4,167 @@ https://www.roblox.com/share?code=6ab07454f5848843b75ba47ce3c9e2c8&type=Experien
 ]]
 
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-
 local player = Players.LocalPlayer
 
+pcall(function()
+    game.CoreGui:FindFirstChild("CyberKeyUI"):Destroy()
+end)
+
 ---------------- CONFIG ----------------
-local KEY_URL = "https://your-server.com/key.txt"
+local SAFE_LINK = "https://sfl.gl/aEdVf6Q"
+local KEY_URL = "ggdgdhdhbsnwkwlwledndncklx87+22()39$$!!$#?2)3)_(;"!"!_)3390192+288383727local"
+
+---------------- GUI ROOT ----------------
+local gui = Instance.new("ScreenGui")
+gui.Name = "CyberKeyUI"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
 
 ---------------- FETCH KEY ----------------
-local function getKey()
+local function fetchFinalKey()
     local success, result = pcall(function()
         return game:HttpGet(KEY_URL)
     end)
 
     if success then
-        return result:gsub("%s+", "")
+        return (result or ""):gsub("%s+", "")
     end
-    return nil
 end
 
-local VALID_KEY = getKey()
+------------------------------------------------
+-- ========== LOGIN (CYBER STYLE) ==========
+------------------------------------------------
+local login = Instance.new("Frame")
+login.Size = UDim2.new(0, 300, 0, 220)
+login.Position = UDim2.new(0.5, -150, 0.5, -110)
+login.BackgroundColor3 = Color3.fromRGB(10,10,10)
+login.Parent = gui
+login.Active = true
+login.Draggable = true
+Instance.new("UICorner", login)
 
----------------- LOGIN GUI ----------------
-local loginGui = Instance.new("ScreenGui")
-loginGui.Name = "LoginV2"
-loginGui.ResetOnSpawn = false
-loginGui.Parent = player:WaitForChild("PlayerGui")
+-- BORDER GLOW EFFECT
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(0,255,255)
+stroke.Parent = login
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 170)
-frame.Position = UDim2.new(0.5, -140, 0.5, -85)
-frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
-frame.Parent = loginGui
-Instance.new("UICorner", frame)
+task.spawn(function()
+    while login.Parent do
+        stroke.Color = Color3.fromRGB(math.random(0,255),255,255)
+        task.wait(0.2)
+    end
+end)
 
+---------------- TITLE ----------------
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1,0,0,40)
 title.BackgroundTransparency = 1
-title.Text = "🔐 Key System V2"
-title.TextColor3 = Color3.new(1,1,1)
-title.Font = Enum.Font.GothamBold
+title.Text = "⚡ CYBER KEY SYSTEM ⚡"
+title.TextColor3 = Color3.fromRGB(0,255,255)
+title.Font = Enum.Font.GothamBlack
 title.TextSize = 18
-title.Parent = frame
+title.Parent = login
 
+---------------- INPUT ----------------
 local box = Instance.new("TextBox")
 box.Size = UDim2.new(0.85,0,0,40)
-box.Position = UDim2.new(0.075,0,0.45,0)
-box.PlaceholderText = "Enter Key..."
+box.Position = UDim2.new(0.075,0,0.30,0)
+box.PlaceholderText = "ENTER KEY..."
 box.Text = ""
-box.TextColor3 = Color3.new(1,1,1)
-box.BackgroundColor3 = Color3.fromRGB(40,40,40)
-box.Parent = frame
+box.TextColor3 = Color3.fromRGB(0,255,255)
+box.BackgroundColor3 = Color3.fromRGB(20,20,20)
+box.Font = Enum.Font.Code
+box.Parent = login
 Instance.new("UICorner", box)
 
+---------------- SAFELINK BUTTON ----------------
+local getKeyBtn = Instance.new("TextButton")
+getKeyBtn.Size = UDim2.new(0.85,0,0,30)
+getKeyBtn.Position = UDim2.new(0.075,0,0.52,0)
+getKeyBtn.Text = "⚡ GET KEY (SAFE LINK)"
+getKeyBtn.BackgroundColor3 = Color3.fromRGB(255,0,255)
+getKeyBtn.TextColor3 = Color3.fromRGB(0,0,0)
+getKeyBtn.Font = Enum.Font.GothamBlack
+getKeyBtn.Parent = login
+Instance.new("UICorner", getKeyBtn)
+
+---------------- VERIFY ----------------
 local btn = Instance.new("TextButton")
 btn.Size = UDim2.new(0.85,0,0,35)
-btn.Position = UDim2.new(0.075,0,0.75,0)
-btn.Text = "Verify"
-btn.BackgroundColor3 = Color3.fromRGB(60,140,255)
-btn.TextColor3 = Color3.new(1,1,1)
-btn.Font = Enum.Font.GothamBold
-btn.Parent = frame
+btn.Position = UDim2.new(0.075,0,0.78,0)
+btn.Text = "▶ UNLOCK"
+btn.BackgroundColor3 = Color3.fromRGB(0,255,0)
+btn.TextColor3 = Color3.fromRGB(0,0,0)
+btn.Font = Enum.Font.GothamBlack
+btn.Parent = login
 Instance.new("UICorner", btn)
 
+---------------- STATUS ----------------
 local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1,0,0,20)
-status.Position = UDim2.new(0,0,0,120)
+status.Position = UDim2.new(0,0,1,-20)
 status.BackgroundTransparency = 1
 status.Text = ""
-status.TextColor3 = Color3.fromRGB(255,80,80)
-status.Font = Enum.Font.Gotham
+status.TextColor3 = Color3.fromRGB(255,0,0)
+status.Font = Enum.Font.Code
 status.TextSize = 12
-status.Parent = frame
+status.Parent = login
 
----------------- AUTO CHECKPOINT GUI ----------------
-local function CreateAutoCheckpoint()
-    pcall(function()
-        game.CoreGui.AutoCheckpointObby:Destroy()
-    end)
+------------------------------------------------
+-- COPY SAFE LINK
+------------------------------------------------
+getKeyBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(SAFE_LINK)
+        status.Text = "✔ LINK COPIED - FINISH TASK"
+    else
+        status.Text = "NO CLIPBOARD SUPPORT"
+    end
 
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "AutoCheckpointObby"
-    gui.Parent = game.CoreGui
-    gui.ResetOnSpawn = false
+    task.wait(1)
+    status.Text = ""
+end)
+
+------------------------------------------------
+-- ========== MAIN UI ==========
+------------------------------------------------
+local function createMainUI()
 
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0,270,0,175)
     frame.Position = UDim2.new(.5,-135,.5,-87)
-    frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+    frame.BackgroundColor3 = Color3.fromRGB(5,5,5)
     frame.Parent = gui
-
     frame.Active = true
     frame.Draggable = true
     Instance.new("UICorner", frame)
 
+    local stroke2 = Instance.new("UIStroke")
+    stroke2.Thickness = 2
+    stroke2.Color = Color3.fromRGB(0,255,0)
+    stroke2.Parent = frame
+
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1,-30,0,30)
     title.BackgroundTransparency = 1
-    title.Text = "🏁 Auto Checkpoint Obby"
-    title.Font = Enum.Font.GothamBold
-    title.TextColor3 = Color3.new(1,1,1)
+    title.Text = "🏁 AUTO TP SYSTEM"
+    title.Font = Enum.Font.GothamBlack
+    title.TextColor3 = Color3.fromRGB(0,255,255)
     title.TextScaled = true
-    title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = frame
 
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size = UDim2.new(0,30,0,30)
     closeBtn.Position = UDim2.new(1,-30,0,0)
     closeBtn.Text = "X"
-    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
     closeBtn.TextColor3 = Color3.new(1,1,1)
-    closeBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
     closeBtn.Parent = frame
     Instance.new("UICorner", closeBtn)
 
     closeBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
-    end)
-
-    local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0,30,0,30)
-    toggleBtn.Position = UDim2.new(0,5,0,5)
-    toggleBtn.Text = "≡"
-    toggleBtn.Parent = gui
-
-    Instance.new("UICorner", toggleBtn)
-
-    local visible = true
-    toggleBtn.MouseButton1Click:Connect(function()
-        visible = not visible
-        frame.Visible = visible
     end)
 
     local info = Instance.new("TextLabel")
@@ -143,26 +174,31 @@ local function CreateAutoCheckpoint()
     info.TextWrapped = true
     info.Font = Enum.Font.Code
     info.TextSize = 13
-    info.TextColor3 = Color3.fromRGB(200,200,200)
-    info.Text = "Tekan Scan dulu, lalu Auto TP"
+    info.TextColor3 = Color3.fromRGB(0,255,255)
+    info.Text = "SCAN THEN TELEPORT"
     info.Parent = frame
 
     local scanBtn = Instance.new("TextButton")
     scanBtn.Size = UDim2.new(.4,0,0,35)
     scanBtn.Position = UDim2.new(.05,0,1,-45)
-    scanBtn.Text = "🔍 Scan"
+    scanBtn.Text = "SCAN"
+    scanBtn.BackgroundColor3 = Color3.fromRGB(0,255,255)
+    scanBtn.TextColor3 = Color3.new(0,0,0)
     scanBtn.Parent = frame
     Instance.new("UICorner", scanBtn)
 
     local tpBtn = Instance.new("TextButton")
     tpBtn.Size = UDim2.new(.4,0,0,35)
     tpBtn.Position = UDim2.new(.55,0,1,-45)
-    tpBtn.Text = "▶ Auto TP"
+    tpBtn.Text = "AUTO TP"
+    tpBtn.BackgroundColor3 = Color3.fromRGB(255,0,255)
+    tpBtn.TextColor3 = Color3.new(0,0,0)
     tpBtn.Parent = frame
     Instance.new("UICorner", tpBtn)
 
+    ---------------- CHECKPOINT ----------------
     local function isCheckpoint(v)
-        return v:IsA("Part") and v.Name == "Point" and v.Parent and tonumber(v.Parent.Name) ~= nil
+        return v:IsA("Part") and v.Name == "Point" and v.Parent and tonumber(v.Parent.Name)
     end
 
     local function scanAll()
@@ -181,7 +217,7 @@ local function CreateAutoCheckpoint()
         return found
     end
 
-    local function getSorted(list)
+    local function sort(list)
         table.sort(list, function(a,b)
             return tonumber(a.Parent.Name) < tonumber(b.Parent.Name)
         end)
@@ -192,17 +228,14 @@ local function CreateAutoCheckpoint()
     local running = false
 
     scanBtn.MouseButton1Click:Connect(function()
-        checkpoints = getSorted(scanAll())
-        info.Text = "Scan selesai!\n"..#checkpoints.." checkpoint ditemukan."
+        checkpoints = sort(scanAll())
+        info.Text = "FOUND: "..#checkpoints
     end)
 
     tpBtn.MouseButton1Click:Connect(function()
-        if #checkpoints == 0 then
-            info.Text = "⚠️ Scan dulu!"
-            return
-        end
-
         running = not running
+
+        if not running then return end
 
         task.spawn(function()
             for i, cp in ipairs(checkpoints) do
@@ -212,32 +245,28 @@ local function CreateAutoCheckpoint()
                 local root = char and char:FindFirstChild("HumanoidRootPart")
 
                 if cp and root then
-                    info.Text = "🏁 Stage "..cp.Parent.Name
+                    info.Text = "STAGE "..cp.Parent.Name
                     root.CFrame = CFrame.new(cp.Position + Vector3.new(0,3,0))
-                    task.wait(0.7)
+                    task.wait(0.5)
                 end
             end
 
             running = false
-            info.Text = "✅ Selesai!"
+            info.Text = "DONE"
         end)
     end)
 end
 
----------------- VERIFY LOGIN ----------------
+------------------------------------------------
+-- LOGIN CHECK
+------------------------------------------------
 btn.MouseButton1Click:Connect(function()
-
-    if not VALID_KEY then
-        status.Text = "❌ Server error"
-        return
-    end
-
-    if box.Text == VALID_KEY then
-        loginGui:Destroy()
-        task.wait(0.3)
-        CreateAutoCheckpoint()
+    if box.Text and box.Text ~= "" then
+        login:Destroy()
+        task.wait(0.2)
+        createMainUI()
     else
-        status.Text = "❌ Wrong Key"
+        status.Text = "ENTER KEY FIRST"
         task.wait(1)
         status.Text = ""
     end
