@@ -7,12 +7,15 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 pcall(function()
-    game.CoreGui:FindFirstChild("CyberKeyUI"):Destroy()
+    local old = game.CoreGui:FindFirstChild("CyberKeyUI")
+    if old then old:Destroy() end
 end)
 
 ---------------- CONFIG ----------------
 local SAFE_LINK = "https://sfl.gl/aEdVf6Q"
-local KEY_URL = "ggdgdhdhbsnwkwlwledndncklx87+22()39$$!!$#?2)3)_(;"!"!_)3390192+288383727local"
+
+-- KEY ASLI (STRING, BUKAN URL)
+local VALID_KEY = "ggdgdhdhbsnwkwlwledndncklx87+22()39$$!!$#?2)3)_(;"!"!_)3390192+288383727local"
 
 ---------------- GUI ROOT ----------------
 local gui = Instance.new("ScreenGui")
@@ -20,20 +23,7 @@ gui.Name = "CyberKeyUI"
 gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
----------------- FETCH KEY ----------------
-local function fetchFinalKey()
-    local success, result = pcall(function()
-        return game:HttpGet(KEY_URL)
-    end)
-
-    if success then
-        return (result or ""):gsub("%s+", "")
-    end
-end
-
-------------------------------------------------
--- ========== LOGIN (CYBER STYLE) ==========
-------------------------------------------------
+---------------- LOGIN ----------------
 local login = Instance.new("Frame")
 login.Size = UDim2.new(0, 300, 0, 220)
 login.Position = UDim2.new(0.5, -150, 0.5, -110)
@@ -43,7 +33,6 @@ login.Active = true
 login.Draggable = true
 Instance.new("UICorner", login)
 
--- BORDER GLOW EFFECT
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 2
 stroke.Color = Color3.fromRGB(0,255,255)
@@ -78,7 +67,7 @@ box.Font = Enum.Font.Code
 box.Parent = login
 Instance.new("UICorner", box)
 
----------------- SAFELINK BUTTON ----------------
+---------------- GET KEY BUTTON ----------------
 local getKeyBtn = Instance.new("TextButton")
 getKeyBtn.Size = UDim2.new(0.85,0,0,30)
 getKeyBtn.Position = UDim2.new(0.075,0,0.52,0)
@@ -89,7 +78,7 @@ getKeyBtn.Font = Enum.Font.GothamBlack
 getKeyBtn.Parent = login
 Instance.new("UICorner", getKeyBtn)
 
----------------- VERIFY ----------------
+---------------- UNLOCK ----------------
 local btn = Instance.new("TextButton")
 btn.Size = UDim2.new(0.85,0,0,35)
 btn.Position = UDim2.new(0.075,0,0.78,0)
@@ -111,13 +100,11 @@ status.Font = Enum.Font.Code
 status.TextSize = 12
 status.Parent = login
 
-------------------------------------------------
--- COPY SAFE LINK
-------------------------------------------------
+---------------- COPY LINK ----------------
 getKeyBtn.MouseButton1Click:Connect(function()
     if setclipboard then
         setclipboard(SAFE_LINK)
-        status.Text = "✔ LINK COPIED - FINISH TASK"
+        status.Text = "✔ LINK COPIED"
     else
         status.Text = "NO CLIPBOARD SUPPORT"
     end
@@ -126,9 +113,7 @@ getKeyBtn.MouseButton1Click:Connect(function()
     status.Text = ""
 end)
 
-------------------------------------------------
--- ========== MAIN UI ==========
-------------------------------------------------
+---------------- MAIN UI ----------------
 local function createMainUI()
 
     local frame = Instance.new("Frame")
@@ -148,7 +133,7 @@ local function createMainUI()
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1,-30,0,30)
     title.BackgroundTransparency = 1
-    title.Text = "🏁 AUTO TP SYSTEM"
+    title.Text = "🏁 AUTO SYSTEM"
     title.Font = Enum.Font.GothamBlack
     title.TextColor3 = Color3.fromRGB(0,255,255)
     title.TextScaled = true
@@ -175,7 +160,7 @@ local function createMainUI()
     info.Font = Enum.Font.Code
     info.TextSize = 13
     info.TextColor3 = Color3.fromRGB(0,255,255)
-    info.Text = "SCAN THEN TELEPORT"
+    info.Text = "READY"
     info.Parent = frame
 
     local scanBtn = Instance.new("TextButton")
@@ -196,7 +181,6 @@ local function createMainUI()
     tpBtn.Parent = frame
     Instance.new("UICorner", tpBtn)
 
-    ---------------- CHECKPOINT ----------------
     local function isCheckpoint(v)
         return v:IsA("Part") and v.Name == "Point" and v.Parent and tonumber(v.Parent.Name)
     end
@@ -217,24 +201,16 @@ local function createMainUI()
         return found
     end
 
-    local function sort(list)
-        table.sort(list, function(a,b)
-            return tonumber(a.Parent.Name) < tonumber(b.Parent.Name)
-        end)
-        return list
-    end
-
     local checkpoints = {}
     local running = false
 
     scanBtn.MouseButton1Click:Connect(function()
-        checkpoints = sort(scanAll())
+        checkpoints = scanAll()
         info.Text = "FOUND: "..#checkpoints
     end)
 
     tpBtn.MouseButton1Click:Connect(function()
         running = not running
-
         if not running then return end
 
         task.spawn(function()
@@ -245,8 +221,8 @@ local function createMainUI()
                 local root = char and char:FindFirstChild("HumanoidRootPart")
 
                 if cp and root then
-                    info.Text = "STAGE "..cp.Parent.Name
                     root.CFrame = CFrame.new(cp.Position + Vector3.new(0,3,0))
+                    info.Text = "STAGE "..cp.Parent.Name
                     task.wait(0.5)
                 end
             end
@@ -257,16 +233,15 @@ local function createMainUI()
     end)
 end
 
-------------------------------------------------
--- LOGIN CHECK
-------------------------------------------------
+---------------- LOGIN CHECK ----------------
 btn.MouseButton1Click:Connect(function()
-    if box.Text and box.Text ~= "" then
+    if box.Text == VALID_KEY then
+        status.Text = "✔ ACCESS GRANTED"
+        task.wait(0.3)
         login:Destroy()
-        task.wait(0.2)
         createMainUI()
     else
-        status.Text = "ENTER KEY FIRST"
+        status.Text = "✖ WRONG KEY"
         task.wait(1)
         status.Text = ""
     end
