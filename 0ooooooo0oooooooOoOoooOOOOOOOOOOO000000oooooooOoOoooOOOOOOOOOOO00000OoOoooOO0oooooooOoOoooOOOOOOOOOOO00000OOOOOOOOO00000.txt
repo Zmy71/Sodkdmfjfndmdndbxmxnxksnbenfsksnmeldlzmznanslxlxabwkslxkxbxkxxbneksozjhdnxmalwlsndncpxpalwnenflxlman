@@ -1,8 +1,3 @@
---[[
-🏁 Auto Checkpoint Obby V1 + UI Upgrade 🏁
-https://www.roblox.com/share?code=6ab07454f5848843b75ba47ce3c9e2c8&type=ExperienceDetails&stamp=1781890720390
-]]
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
